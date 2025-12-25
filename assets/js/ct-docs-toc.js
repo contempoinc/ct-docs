@@ -37,9 +37,16 @@
         
         if (!toc) return;
 
+        const tocList = toc.querySelector('.ct-docs-toc-list');
         const links = toc.querySelectorAll('a[href^="#"]');
         const headingIds = Array.from(links).map(link => link.getAttribute('href').slice(1));
         const headings = headingIds.map(id => document.getElementById(id)).filter(Boolean);
+        
+        // Create indicator element
+        const indicator = document.createElement('div');
+        indicator.className = 'ct-docs-toc-indicator';
+        indicator.style.opacity = '0';
+        tocList?.appendChild(indicator);
         
         // Header offset for scroll calculations
         const headerOffset = parseInt(
@@ -49,12 +56,30 @@
         );
 
         /**
+         * Update indicator position
+         */
+        function updateIndicator(activeLink) {
+            if (!activeLink || !tocList) {
+                indicator.style.opacity = '0';
+                return;
+            }
+            
+            const tocRect = tocList.getBoundingClientRect();
+            const linkRect = activeLink.getBoundingClientRect();
+            
+            indicator.style.top = (linkRect.top - tocRect.top + 6) + 'px';
+            indicator.style.height = (linkRect.height - 12) + 'px';
+            indicator.style.opacity = '1';
+        }
+
+        /**
          * Update active TOC item based on scroll position
          */
         const updateActiveItem = throttle(function() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             
             let activeId = '';
+            let activeLink = null;
             
             // Find the heading that's currently in view
             for (let i = headings.length - 1; i >= 0; i--) {
@@ -75,11 +100,15 @@
                 if (href === activeId) {
                     listItem?.classList.add('is-active');
                     link.setAttribute('aria-current', 'true');
+                    activeLink = link;
                 } else {
                     listItem?.classList.remove('is-active');
                     link.removeAttribute('aria-current');
                 }
             });
+            
+            // Update indicator position
+            updateIndicator(activeLink);
         }, 100);
 
         /**

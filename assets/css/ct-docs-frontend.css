@@ -469,21 +469,23 @@
     padding: 0;
 }
 
+.ct-docs-toc-list {
+    position: relative;
+}
+
 .ct-docs-toc-item {
     margin-bottom: 4px;
 }
 
 .ct-docs-toc-item a {
     display: block;
-    padding: 6px 0;
+    padding: 6px 0 6px 6px;
     color: var(--ct-docs-text-light);
     text-decoration: none;
     font-size: 13px;
     line-height: 1.4;
     transition: all var(--ct-docs-transition);
-    border-left: 2px solid transparent;
-    padding-left: 12px;
-    margin-left: -12px;
+    position: relative;
 }
 
 .ct-docs-toc-item a:hover {
@@ -493,8 +495,18 @@
 
 .ct-docs-toc-item.is-active > a {
     color: var(--ct-docs-primary);
-    border-left-color: var(--ct-docs-primary);
     font-weight: 500;
+}
+
+/* Active indicator - single element positioned by JS */
+.ct-docs-toc-indicator {
+    position: absolute;
+    left: 0;
+    width: 2px;
+    background: var(--ct-docs-primary);
+    border-radius: 1px;
+    transition: top 0.2s ease, height 0.2s ease;
+    pointer-events: none;
 }
 
 /* TOC nesting indentation */
@@ -566,7 +578,7 @@
 
 .ct-docs-related-title {
     margin: 0 0 8px;
-    font-size: 24px !important;
+    font-size: 18px !important;
     font-weight: 600;
     color: var(--ct-docs-text);
     line-height: 1.4;

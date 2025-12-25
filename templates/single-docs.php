@@ -21,7 +21,26 @@ $current_post_id = get_the_ID();
 
 // Generate TOC
 $toc_data = CT_Docs_TOC_Generator::generate( get_the_content(), $current_post_id );
+
+// Get docs page URL
+$docs_page_url = get_permalink( CT_Docs_CPT::get_docs_page_id() );
 ?>
+
+<!-- Docs Header -->
+<header class="ct-docs-page-header ct-docs-page-header--sticky">
+    <div class="ct-docs-page-header-inner">
+        <a href="<?php echo esc_url( $docs_page_url ); ?>" class="ct-docs-page-header-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Documentation</span>
+        </a>
+        <div class="ct-docs-page-header-search">
+            <?php echo do_shortcode( '[ct_docs_search placeholder="Search docs..."]' ); ?>
+        </div>
+    </div>
+</header>
 
 <div id="ct-docs-single" class="ct-docs-single-wrapper">
     

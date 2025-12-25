@@ -81,10 +81,12 @@ class CT_Docs_Elementor {
         // Include widget files
         require_once CT_DOCS_PATH . 'elementor/widgets/class-toc-widget.php';
         require_once CT_DOCS_PATH . 'elementor/widgets/class-search-widget.php';
+        require_once CT_DOCS_PATH . 'elementor/widgets/class-header-widget.php';
         
         // Register widgets
         $widgets_manager->register( new CT_Docs_TOC_Widget() );
         $widgets_manager->register( new CT_Docs_Search_Widget() );
+        $widgets_manager->register( new CT_Docs_Header_Widget() );
     }
 
     /**

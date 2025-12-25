@@ -3,11 +3,9 @@
  * Plugin Name: Contempo Docs
  * Plugin URI: https://contempothemes.com/
  * Description: A streamlined documentation plugin with live search, auto-generated TOC, and Elementor widgets.
- * Version: 1.0.0
+ * Version: 1.1.2
  * Author: Contempo Themes
  * Author URI: https://contempothemes.com/
- * License: GPL-2.0+
- * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: ct-docs
  *
  * @package CT_Docs
@@ -21,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin Constants
  */
-define( 'CT_DOCS_VERSION', '1.0.0' );
+define( 'CT_DOCS_VERSION', '1.1.2' );
 define( 'CT_DOCS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CT_DOCS_URL', plugin_dir_url( __FILE__ ) );
 define( 'CT_DOCS_BASENAME', plugin_basename( __FILE__ ) );

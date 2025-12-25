@@ -119,6 +119,7 @@ class CT_Docs_Core {
     public function register_shortcodes() {
         add_shortcode( 'ct_docs_toc', array( $this, 'shortcode_toc' ) );
         add_shortcode( 'ct_docs_search', array( $this, 'shortcode_search' ) );
+        add_shortcode( 'ct_docs_header', array( $this, 'shortcode_header' ) );
     }
 
     /**
@@ -234,6 +235,48 @@ class CT_Docs_Core {
     }
 
     /**
+     * Header Shortcode
+     *
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    public function shortcode_header( $atts ) {
+        $atts = shortcode_atts( array(
+            'title'       => 'Documentation',
+            'show_icon'   => 'yes',
+            'show_search' => 'yes',
+            'placeholder' => 'Search docs...',
+            'sticky'      => 'no',
+        ), $atts, 'ct_docs_header' );
+        
+        $docs_page_url = get_permalink( CT_Docs_CPT::get_docs_page_id() );
+        $sticky_class = $atts['sticky'] === 'yes' ? ' ct-docs-page-header--sticky' : '';
+        
+        ob_start();
+        ?>
+        <header class="ct-docs-page-header<?php echo esc_attr( $sticky_class ); ?>">
+            <div class="ct-docs-page-header-inner">
+                <a href="<?php echo esc_url( $docs_page_url ); ?>" class="ct-docs-page-header-title">
+                    <?php if ( $atts['show_icon'] === 'yes' ) : ?>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <?php endif; ?>
+                    <span><?php echo esc_html( $atts['title'] ); ?></span>
+                </a>
+                <?php if ( $atts['show_search'] === 'yes' ) : ?>
+                <div class="ct-docs-page-header-search">
+                    <?php echo do_shortcode( sprintf( '[ct_docs_search placeholder="%s"]', esc_attr( $atts['placeholder'] ) ) ); ?>
+                </div>
+                <?php endif; ?>
+            </div>
+        </header>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
      * Enqueue frontend assets
      */
     public function enqueue_frontend_assets() {
@@ -304,7 +347,11 @@ class CT_Docs_Core {
         
         // Check if page contains our shortcodes or widgets
         global $post;
-        if ( $post && ( has_shortcode( $post->post_content, 'ct_docs_toc' ) || has_shortcode( $post->post_content, 'ct_docs_search' ) ) ) {
+        if ( $post && ( 
+            has_shortcode( $post->post_content, 'ct_docs_toc' ) || 
+            has_shortcode( $post->post_content, 'ct_docs_search' ) ||
+            has_shortcode( $post->post_content, 'ct_docs_header' )
+        ) ) {
             return true;
         }
         

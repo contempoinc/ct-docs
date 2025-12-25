@@ -39,7 +39,7 @@
 .ct-docs-page-header--sticky {
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 98;
 }
 
 .ct-docs-page-header-inner {
@@ -455,6 +455,7 @@
     font-weight: 600;
     letter-spacing: 0.5px;
     color: var(--ct-docs-text-muted);
+    text-transform: uppercase;
 }
 
 .ct-docs-toc-list {
@@ -537,7 +538,7 @@
 
 .ct-docs-related-heading {
     margin: 0 0 24px;
-    font-size: 28px !important;
+    font-size: 24px !important;
     font-weight: 600;
     color: var(--ct-docs-text);
 }

@@ -22,15 +22,8 @@ class CT_Docs_TOC_Generator {
      * @return array Array with 'toc' HTML and 'content' with IDs added to headings
      */
     public static function generate( $content, $post_id = null ) {
-        // Try to get from cache
-        if ( $post_id ) {
-            $cache_key = 'toc_' . $post_id;
-            $cached = CT_Docs_Cache::get( $cache_key );
-            if ( false !== $cached ) {
-                return $cached;
-            }
-        }
-
+        // No caching for single doc TOC - page caching plugin handles this
+        
         // Find all headings (H2-H5)
         $pattern = '/<h([2-5])[^>]*>(.*?)<\/h[2-5]>/i';
         preg_match_all( $pattern, $content, $matches, PREG_SET_ORDER );
@@ -73,18 +66,11 @@ class CT_Docs_TOC_Generator {
         // Generate TOC HTML
         $toc_html = self::render_toc( $toc_items );
 
-        $result = array(
+        return array(
             'toc'     => $toc_html,
             'content' => $modified_content,
             'items'   => $toc_items,
         );
-
-        // Cache the result
-        if ( $post_id ) {
-            CT_Docs_Cache::set( $cache_key, $result );
-        }
-
-        return $result;
     }
 
     /**
@@ -121,10 +107,11 @@ class CT_Docs_TOC_Generator {
             return '';
         }
 
-        $html = '<nav class="ct-docs-toc" aria-label="Table of Contents">';
+        $html = '<nav class="ct-docs-toc is-loading" aria-label="Table of Contents">';
         $html .= '<div class="ct-docs-toc-header">';
         $html .= '<span class="ct-docs-toc-title">On this page</span>';
         $html .= '</div>';
+        $html .= '<div class="ct-docs-toc-loader" aria-label="Loading table of contents"></div>';
         $html .= '<ul class="ct-docs-toc-list">';
 
         $current_level = 2; // Start at H2

@@ -42,6 +42,32 @@
         const headingIds = Array.from(links).map(link => link.getAttribute('href').slice(1));
         const headings = headingIds.map(id => document.getElementById(id)).filter(Boolean);
         
+        // Progressive disclosure setup - detect top-level and mark collapsible items
+        const tocItems = toc.querySelectorAll('.ct-docs-toc-item');
+        
+        // Find the minimum heading level (top level in this doc)
+        let minLevel = 6;
+        tocItems.forEach(item => {
+            for (let i = 2; i <= 5; i++) {
+                if (item.classList.contains('ct-docs-toc-level-' + i)) {
+                    minLevel = Math.min(minLevel, i);
+                    break;
+                }
+            }
+        });
+        
+        // Mark items with children, and top-level items as collapsible
+        tocItems.forEach(item => {
+            const hasSublist = item.querySelector(':scope > .ct-docs-toc-sublist');
+            if (hasSublist) {
+                item.classList.add('has-children');
+                // Top-level items with children are collapsible
+                if (item.classList.contains('ct-docs-toc-level-' + minLevel)) {
+                    item.classList.add('is-collapsible');
+                }
+            }
+        });
+        
         // Create indicator element
         const indicator = document.createElement('div');
         indicator.className = 'ct-docs-toc-indicator';
@@ -71,6 +97,30 @@
             indicator.style.height = (linkRect.height - 12) + 'px';
             indicator.style.opacity = '1';
         }
+        
+        /**
+         * Expand/collapse sections for progressive disclosure
+         */
+        function updateExpandedSections(activeItem) {
+            // Collapse all sections first
+            tocItems.forEach(item => {
+                item.classList.remove('is-expanded');
+            });
+            
+            if (!activeItem) return;
+            
+            // Expand the active item if it has children
+            if (activeItem.classList.contains('has-children')) {
+                activeItem.classList.add('is-expanded');
+            }
+            
+            // Expand all ancestor items (for nested active items)
+            let parent = activeItem.parentElement?.closest('.ct-docs-toc-item');
+            while (parent) {
+                parent.classList.add('is-expanded');
+                parent = parent.parentElement?.closest('.ct-docs-toc-item');
+            }
+        }
 
         /**
          * Update active TOC item based on scroll position
@@ -80,6 +130,7 @@
             
             let activeId = '';
             let activeLink = null;
+            let activeItem = null;
             
             // Find the heading that's currently in view
             for (let i = headings.length - 1; i >= 0; i--) {
@@ -101,14 +152,18 @@
                     listItem?.classList.add('is-active');
                     link.setAttribute('aria-current', 'true');
                     activeLink = link;
+                    activeItem = listItem;
                 } else {
                     listItem?.classList.remove('is-active');
                     link.removeAttribute('aria-current');
                 }
             });
             
-            // Update indicator position
-            updateIndicator(activeLink);
+            // Update progressive disclosure
+            updateExpandedSections(activeItem);
+            
+            // Update indicator position (with slight delay for expand animation)
+            setTimeout(() => updateIndicator(activeLink), 50);
         }, 100);
 
         /**
@@ -176,6 +231,22 @@
         links.forEach(link => {
             link.addEventListener('click', scrollToHeading);
         });
+        
+        // Click to toggle expandable items
+        tocItems.forEach(item => {
+            if (item.classList.contains('has-children')) {
+                const link = item.querySelector(':scope > a');
+                link?.addEventListener('click', (e) => {
+                    // Toggle expanded state on click (in addition to navigation)
+                    item.classList.toggle('is-expanded');
+                    // Update indicator after expand animation
+                    setTimeout(() => {
+                        const activeLink = toc.querySelector('.ct-docs-toc-item.is-active > a');
+                        updateIndicator(activeLink);
+                    }, 50);
+                });
+            }
+        });
 
         window.addEventListener('scroll', updateActiveItem);
         
@@ -224,6 +295,11 @@
 
         // Initial active state
         updateActiveItem();
+        
+        // Remove loading state after setup is complete
+        requestAnimationFrame(() => {
+            toc.classList.remove('is-loading');
+        });
     }
 
     // Initialize on DOM ready

@@ -81,6 +81,8 @@
 .ct-docs-page-header-search {
     flex: 1;
     max-width: 480px;
+    display: flex;
+    align-items: center;
 }
 
 .ct-docs-page-header-search .ct-docs-search-widget {
@@ -170,6 +172,7 @@
 
 .ct-docs-accordion-title {
     flex: 1;
+    text-transform: initial;
 }
 
 .ct-docs-accordion-count {
@@ -458,10 +461,37 @@
     text-transform: uppercase;
 }
 
+/* TOC Loading State - hide content until JS processes it */
+.ct-docs-toc.is-loading .ct-docs-toc-list {
+    display: none;
+}
+
+.ct-docs-toc.is-loading .ct-docs-toc-loader {
+    display: flex;
+}
+
+.ct-docs-toc-loader {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+.ct-docs-toc-loader::after {
+    content: '';
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--ct-docs-border);
+    border-top-color: var(--ct-docs-primary);
+    border-radius: 50%;
+    animation: ct-docs-spin 0.7s ease-in-out infinite;
+}
+
 .ct-docs-toc-list {
     list-style: none;
     margin: 0;
     padding: 0;
+    transition: opacity 0.2s ease;
 }
 
 .ct-docs-toc-list ul {
@@ -523,8 +553,41 @@
     padding-left: 24px;
 }
 
+/* Progressive disclosure - JS adds 'is-collapsible' class to items that should collapse */
 .ct-docs-toc-sublist {
     margin-top: 4px;
+}
+
+/* Hide collapsible sublists by default */
+.ct-docs-toc-item.is-collapsible > .ct-docs-toc-sublist {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+/* Show children when parent section is expanded */
+.ct-docs-toc-item.is-expanded > .ct-docs-toc-sublist {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+/* Visual indicator for expandable items */
+.ct-docs-toc-item.has-children > a::after {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 8px;
+    border-right: 1.5px solid var(--ct-docs-text-muted);
+    border-bottom: 1.5px solid var(--ct-docs-text-muted);
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+    vertical-align: middle;
+}
+
+.ct-docs-toc-item.is-expanded > a::after {
+    transform: rotate(45deg);
 }
 
 /* ============================================

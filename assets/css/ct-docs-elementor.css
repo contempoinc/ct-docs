@@ -1,0 +1,53 @@
+/**
+ * CT Docs Elementor Widget Styles
+ *
+ * @package CT_Docs
+ */
+
+/* ============================================
+   Elementor Editor Preview Styles
+   ============================================ */
+.elementor-editor-active .ct-docs-search-preview-results {
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e7e7e7;
+    border-radius: 8px;
+    margin-top: 8px;
+}
+
+.elementor-editor-active .ct-docs-toc-preview {
+    padding: 20px;
+    background: #f7f7f7;
+    border-radius: 8px;
+}
+
+/* Widget category icon in Elementor panel */
+.elementor-panel .elementor-element .icon.eicon-folder {
+    color: #03b5c3;
+}
+
+/* Ensure proper widget display in editor */
+.elementor-widget-ct-docs-toc,
+.elementor-widget-ct-docs-search {
+    width: 100%;
+}
+
+/* ============================================
+   TOC Widget Elementor Overrides
+   ============================================ */
+.elementor-widget-ct-docs-toc .ct-docs-toc-widget {
+    margin: 0;
+}
+
+/* ============================================
+   Search Widget Elementor Overrides
+   ============================================ */
+.elementor-widget-ct-docs-search .ct-docs-search-widget {
+    max-width: none;
+}
+
+/* Ensure dropdown is visible above other Elementor elements */
+.elementor-widget-ct-docs-search .ct-docs-search-results {
+    z-index: 10000;
+}
+

@@ -1,0 +1,250 @@
+/**
+ * CT Docs Accordion Navigation
+ *
+ * Features:
+ * - Expand/collapse sections
+ * - LocalStorage persistence
+ * - Mobile slide-in navigation
+ * - Auto-scroll to current doc
+ *
+ * @package CT_Docs
+ */
+
+(function() {
+    'use strict';
+
+    const STORAGE_KEY = 'ct_docs_accordion_state';
+
+    /**
+     * Initialize accordion functionality
+     */
+    function initAccordion() {
+        const accordion = document.querySelector('.ct-docs-accordion');
+        const sidebar = document.querySelector('.ct-docs-sidebar');
+        const navToggle = document.querySelector('.ct-docs-mobile-nav-toggle');
+        const backdrop = document.querySelector('.ct-docs-backdrop');
+        
+        if (!accordion) return;
+
+        const items = accordion.querySelectorAll('.ct-docs-accordion-item');
+        const headers = accordion.querySelectorAll('.ct-docs-accordion-header');
+        
+        // Load saved state from localStorage
+        const savedState = loadState();
+
+        /**
+         * Toggle accordion item
+         */
+        function toggleItem(item, forceState = null) {
+            const header = item.querySelector('.ct-docs-accordion-header');
+            const content = item.querySelector('.ct-docs-accordion-content');
+            const category = item.dataset.category;
+            
+            const isOpen = forceState !== null ? forceState : !item.classList.contains('is-open');
+            
+            if (isOpen) {
+                item.classList.add('is-open');
+                header.setAttribute('aria-expanded', 'true');
+                content.removeAttribute('hidden');
+                
+                // Animate height
+                content.style.height = '0px';
+                content.style.overflow = 'hidden';
+                requestAnimationFrame(() => {
+                    content.style.transition = 'height 0.3s ease';
+                    content.style.height = content.scrollHeight + 'px';
+                });
+                
+                setTimeout(() => {
+                    content.style.height = '';
+                    content.style.overflow = '';
+                    content.style.transition = '';
+                }, 300);
+            } else {
+                item.classList.remove('is-open');
+                header.setAttribute('aria-expanded', 'false');
+                
+                // Animate height
+                content.style.height = content.scrollHeight + 'px';
+                content.style.overflow = 'hidden';
+                requestAnimationFrame(() => {
+                    content.style.transition = 'height 0.3s ease';
+                    content.style.height = '0px';
+                });
+                
+                setTimeout(() => {
+                    content.setAttribute('hidden', '');
+                    content.style.height = '';
+                    content.style.overflow = '';
+                    content.style.transition = '';
+                }, 300);
+            }
+            
+            // Save state
+            saveState(category, isOpen);
+        }
+
+        /**
+         * Load state from localStorage
+         */
+        function loadState() {
+            try {
+                const state = localStorage.getItem(STORAGE_KEY);
+                return state ? JSON.parse(state) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        /**
+         * Save state to localStorage
+         */
+        function saveState(category, isOpen) {
+            try {
+                const state = loadState();
+                state[category] = isOpen;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {
+                // localStorage not available
+            }
+        }
+
+        /**
+         * Open mobile navigation
+         */
+        function openMobileNav() {
+            sidebar?.classList.add('is-open');
+            backdrop?.classList.add('is-visible');
+            navToggle?.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus first focusable element
+            const firstFocusable = sidebar?.querySelector('input, button, a');
+            firstFocusable?.focus();
+        }
+
+        /**
+         * Close mobile navigation
+         */
+        function closeMobileNav() {
+            sidebar?.classList.remove('is-open');
+            backdrop?.classList.remove('is-visible');
+            navToggle?.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+            
+            // Return focus to toggle
+            navToggle?.focus();
+        }
+
+        /**
+         * Scroll to current doc in accordion
+         */
+        function scrollToCurrentDoc() {
+            const currentItem = accordion.querySelector('.ct-docs-nav-item.is-current');
+            if (!currentItem) return;
+            
+            // Ensure parent accordion is open
+            const accordionItem = currentItem.closest('.ct-docs-accordion-item');
+            if (accordionItem && !accordionItem.classList.contains('is-open')) {
+                toggleItem(accordionItem, true);
+            }
+            
+            // Scroll into view after a short delay
+            setTimeout(() => {
+                currentItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, 350);
+        }
+
+        // Apply saved state or defaults
+        items.forEach(item => {
+            const category = item.dataset.category;
+            
+            // Check if this is the current category
+            const hasCurrent = item.querySelector('.ct-docs-nav-item.is-current');
+            
+            if (savedState.hasOwnProperty(category)) {
+                // Use saved state, but always open if contains current doc
+                toggleItem(item, savedState[category] || hasCurrent);
+            } else if (!item.classList.contains('is-open') && hasCurrent) {
+                // Open if contains current doc
+                toggleItem(item, true);
+            }
+        });
+
+        // Event listeners for accordion headers
+        headers.forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.closest('.ct-docs-accordion-item');
+                toggleItem(item);
+            });
+            
+            // Keyboard support
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    const item = header.closest('.ct-docs-accordion-item');
+                    toggleItem(item);
+                }
+            });
+        });
+
+        // Mobile navigation toggle
+        navToggle?.addEventListener('click', () => {
+            if (sidebar?.classList.contains('is-open')) {
+                closeMobileNav();
+            } else {
+                openMobileNav();
+            }
+        });
+
+        // Close on backdrop click (also handled in toc.js, but safe to duplicate)
+        backdrop?.addEventListener('click', () => {
+            closeMobileNav();
+            // Also close TOC if open
+            const tocSidebar = document.querySelector('.ct-docs-toc-sidebar');
+            if (tocSidebar?.classList.contains('is-open')) {
+                tocSidebar.classList.remove('is-open');
+                backdrop.classList.remove('is-visible');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (sidebar?.classList.contains('is-open')) {
+                    closeMobileNav();
+                }
+            }
+        });
+
+        // Focus trap for mobile nav
+        sidebar?.addEventListener('keydown', (e) => {
+            if (e.key !== 'Tab' || !sidebar.classList.contains('is-open')) return;
+            
+            const focusable = sidebar.querySelectorAll('input, button, a, [tabindex]:not([tabindex="-1"])');
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        });
+
+        // Scroll to current doc on load
+        scrollToCurrentDoc();
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAccordion);
+    } else {
+        initAccordion();
+    }
+
+})();
+

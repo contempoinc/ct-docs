@@ -1,0 +1,50 @@
+/**
+ * CT Docs Admin Styles
+ *
+ * @package CT_Docs
+ */
+
+/* Docs list table columns */
+.post-type-docs .column-doc_category {
+    width: 15%;
+}
+
+.post-type-docs .column-read_time {
+    width: 10%;
+}
+
+.post-type-docs .column-read_time .na,
+.post-type-docs .column-doc_category .na {
+    color: #999;
+}
+
+/* Admin notices */
+.notice.ct-docs-notice {
+    border-left-color: #03b5c3;
+}
+
+.notice.ct-docs-notice .notice-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+/* Category labels in list */
+.post-type-docs .doc-category-label {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #f0f0f1;
+    border-radius: 3px;
+    font-size: 12px;
+    margin: 2px 2px 2px 0;
+}
+
+.post-type-docs .doc-category-label.documentation {
+    background: #e7f5f6;
+    color: #03b5c3;
+}
+
+.post-type-docs .doc-category-label.knowledge-base {
+    background: #fef3e7;
+    color: #d17f00;
+}
+

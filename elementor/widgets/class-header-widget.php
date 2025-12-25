@@ -84,18 +84,6 @@ class CT_Docs_Header_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
-            'show_icon',
-            array(
-                'label'        => 'Show Icon',
-                'type'         => \Elementor\Controls_Manager::SWITCHER,
-                'label_on'     => 'Yes',
-                'label_off'    => 'No',
-                'return_value' => 'yes',
-                'default'      => 'yes',
-            )
-        );
-
-        $this->add_control(
             'show_search',
             array(
                 'label'        => 'Show Search',
@@ -318,12 +306,6 @@ class CT_Docs_Header_Widget extends \Elementor\Widget_Base {
         <header class="ct-docs-page-header<?php echo esc_attr( $sticky_class ); ?>">
             <div class="ct-docs-page-header-inner">
                 <a href="<?php echo esc_url( $docs_page_url ); ?>" class="ct-docs-page-header-title">
-                    <?php if ( $settings['show_icon'] === 'yes' ) : ?>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
-                    <?php endif; ?>
                     <span><?php echo esc_html( $settings['title'] ); ?></span>
                 </a>
                 <?php if ( $settings['show_search'] === 'yes' ) : ?>
@@ -347,12 +329,6 @@ class CT_Docs_Header_Widget extends \Elementor\Widget_Base {
         <header class="ct-docs-page-header{{ stickyClass }}">
             <div class="ct-docs-page-header-inner">
                 <a href="#" class="ct-docs-page-header-title">
-                    <# if ( settings.show_icon === 'yes' ) { #>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
-                    <# } #>
                     <span>{{{ settings.title }}}</span>
                 </a>
                 <# if ( settings.show_search === 'yes' ) { #>

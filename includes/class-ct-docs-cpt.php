@@ -84,6 +84,7 @@ class CT_Docs_CPT {
                 'excerpt', 
                 'revisions',
                 'author',
+                'page-attributes', // Enables menu_order for manual sorting
             ),
         );
 

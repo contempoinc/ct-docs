@@ -5,12 +5,28 @@
  */
 
 /* Docs list table columns */
+.post-type-docs .column-menu_order {
+    width: 60px;
+    text-align: center;
+}
+
 .post-type-docs .column-doc_category {
     width: 15%;
 }
 
 .post-type-docs .column-read_time {
     width: 10%;
+}
+
+/* Order value styling */
+.ct-docs-order-value {
+    display: inline-block;
+    min-width: 30px;
+    padding: 4px 8px;
+    background: #f0f0f1;
+    border-radius: 4px;
+    font-weight: 500;
+    text-align: center;
 }
 
 .post-type-docs .column-read_time .na,

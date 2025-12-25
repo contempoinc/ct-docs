@@ -166,17 +166,44 @@ class CT_Docs_TOC_Generator {
 
     /**
      * Filter content to add IDs to headings
+     * Does NOT use cache - processes content directly to preserve wpautop formatting
      *
-     * @param string $content Post content
-     * @return string Modified content
+     * @param string $content Post content (already processed by wpautop)
+     * @return string Modified content with heading IDs
      */
     public static function filter_content( $content ) {
         if ( ! is_singular( 'docs' ) ) {
             return $content;
         }
 
-        $result = self::generate( $content, get_the_ID() );
-        return $result['content'];
+        // Find all headings (H2-H5) and add IDs
+        $pattern = '/<h([2-5])([^>]*)>(.*?)<\/h[2-5]>/i';
+        $used_ids = array();
+        
+        $content = preg_replace_callback( $pattern, function( $match ) use ( &$used_ids ) {
+            $level = $match[1];
+            $attrs = $match[2];
+            $text = $match[3];
+            
+            // Skip if already has an ID
+            if ( preg_match( '/\bid\s*=/', $attrs ) ) {
+                return $match[0];
+            }
+            
+            // Generate ID from heading text
+            $id = sanitize_title( wp_strip_all_tags( $text ) );
+            $base_id = $id;
+            $counter = 1;
+            while ( in_array( $id, $used_ids, true ) ) {
+                $id = $base_id . '-' . $counter;
+                $counter++;
+            }
+            $used_ids[] = $id;
+            
+            return sprintf( '<h%s id="%s"%s>%s</h%s>', $level, esc_attr( $id ), $attrs, $text, $level );
+        }, $content );
+
+        return $content;
     }
 
     /**

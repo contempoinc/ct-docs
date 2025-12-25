@@ -395,6 +395,37 @@
     margin: 16px 0;
 }
 
+/* Responsive Video Embeds */
+.ct-docs-body .fluid-width-video-wrapper {
+    position: relative;
+    width: 100%;
+    margin: 40px 0 50px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.ct-docs-body .fluid-width-video-wrapper iframe,
+.ct-docs-body .fluid-width-video-wrapper object,
+.ct-docs-body .fluid-width-video-wrapper embed,
+.ct-docs-body .fluid-width-video-wrapper video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 8px;
+}
+
+/* Direct iframe embeds without wrapper */
+.ct-docs-body iframe[src*="youtube"],
+.ct-docs-body iframe[src*="vimeo"],
+.ct-docs-body iframe[src*="wistia"] {
+    max-width: 100%;
+    margin: 40px 0 50px;
+    border-radius: 8px;
+}
+
 /* ============================================
    Right Sidebar - Sticky TOC
    ============================================ */
@@ -422,7 +453,6 @@
 .ct-docs-toc-title {
     font-size: 12px;
     font-weight: 600;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--ct-docs-text-muted);
 }
@@ -458,6 +488,7 @@
 
 .ct-docs-toc-item a:hover {
     color: var(--ct-docs-primary);
+    opacity: 0.8;
 }
 
 .ct-docs-toc-item.is-active > a {

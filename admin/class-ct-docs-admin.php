@@ -109,8 +109,9 @@ class CT_Docs_Admin {
         foreach ( $columns as $key => $value ) {
             $new_columns[ $key ] = $value;
             
-            // Add category column after title
+            // Add columns after title
             if ( $key === 'title' ) {
+                $new_columns['menu_order'] = 'Order';
                 $new_columns['doc_category'] = 'Category';
                 $new_columns['read_time'] = 'Read Time';
             }
@@ -127,6 +128,11 @@ class CT_Docs_Admin {
      */
     public function render_columns( $column, $post_id ) {
         switch ( $column ) {
+            case 'menu_order':
+                $order = get_post_field( 'menu_order', $post_id );
+                echo '<span class="ct-docs-order-value">' . esc_html( $order ) . '</span>';
+                break;
+
             case 'doc_category':
                 $terms = get_the_terms( $post_id, 'doc_category' );
                 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
@@ -155,6 +161,7 @@ class CT_Docs_Admin {
      * @return array Modified columns
      */
     public function sortable_columns( $columns ) {
+        $columns['menu_order'] = 'menu_order';
         $columns['read_time'] = 'read_time';
         return $columns;
     }

@@ -19,8 +19,8 @@ get_header();
 // Get current post
 $current_post_id = get_the_ID();
 
-// Generate TOC
-$toc_data = CT_Docs_TOC_Generator::generate( get_the_content(), $current_post_id );
+// Generate TOC from post content (for sidebar)
+$toc_html = CT_Docs_TOC_Generator::get_toc( $current_post_id );
 
 // Get docs page URL
 $docs_page_url = get_permalink( CT_Docs_CPT::get_docs_page_id() );
@@ -30,10 +30,6 @@ $docs_page_url = get_permalink( CT_Docs_CPT::get_docs_page_id() );
 <header class="ct-docs-page-header ct-docs-page-header--sticky">
     <div class="ct-docs-page-header-inner">
         <a href="<?php echo esc_url( $docs_page_url ); ?>" class="ct-docs-page-header-title">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
             <span>Documentation</span>
         </a>
         <div class="ct-docs-page-header-search">
@@ -110,10 +106,7 @@ $docs_page_url = get_permalink( CT_Docs_CPT::get_docs_page_id() );
                 </header>
                 
                 <div class="ct-docs-body">
-                    <?php 
-                    // Output content with heading IDs added
-                    echo wp_kses_post( $toc_data['content'] );
-                    ?>
+                    <?php the_content(); ?>
                 </div>
                 
                 <!-- Related Docs -->
@@ -127,7 +120,7 @@ $docs_page_url = get_permalink( CT_Docs_CPT::get_docs_page_id() );
     <!-- Right Sidebar: Sticky TOC -->
     <aside class="ct-docs-toc-sidebar" role="complementary" aria-label="Table of contents">
         <div class="ct-docs-toc-sticky">
-            <?php echo $toc_data['toc']; ?>
+            <?php echo $toc_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
         </div>
     </aside>
 

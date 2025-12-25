@@ -92,6 +92,9 @@ class CT_Docs_Core {
         // Clear cache on post save
         add_action( 'save_post_docs', array( 'CT_Docs_Cache', 'flush_all' ) );
         
+        // Add heading IDs to docs content for TOC links
+        add_filter( 'the_content', array( $this, 'add_heading_ids' ), 15 );
+        
         // Elementor late init
         add_action( 'elementor/init', array( $this, 'init_elementor' ) );
     }
@@ -143,8 +146,10 @@ class CT_Docs_Core {
             'post_type'      => 'docs',
             'post_status'    => 'publish',
             'posts_per_page' => -1,
-            'orderby'        => 'title',
-            'order'          => 'ASC',
+            'orderby'        => array(
+                'menu_order' => 'ASC',
+                'title'      => 'ASC',
+            ),
         );
         
         if ( $atts['category'] !== 'all' ) {
@@ -243,7 +248,6 @@ class CT_Docs_Core {
     public function shortcode_header( $atts ) {
         $atts = shortcode_atts( array(
             'title'       => 'Documentation',
-            'show_icon'   => 'yes',
             'show_search' => 'yes',
             'placeholder' => 'Search docs...',
             'sticky'      => 'no',
@@ -257,12 +261,6 @@ class CT_Docs_Core {
         <header class="ct-docs-page-header<?php echo esc_attr( $sticky_class ); ?>">
             <div class="ct-docs-page-header-inner">
                 <a href="<?php echo esc_url( $docs_page_url ); ?>" class="ct-docs-page-header-title">
-                    <?php if ( $atts['show_icon'] === 'yes' ) : ?>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
-                    <?php endif; ?>
                     <span><?php echo esc_html( $atts['title'] ); ?></span>
                 </a>
                 <?php if ( $atts['show_search'] === 'yes' ) : ?>
@@ -274,6 +272,22 @@ class CT_Docs_Core {
         </header>
         <?php
         return ob_get_clean();
+    }
+
+    /**
+     * Add IDs to headings in docs content for TOC anchor links
+     *
+     * @param string $content Post content
+     * @return string Modified content with heading IDs
+     */
+    public function add_heading_ids( $content ) {
+        // Only process on single docs
+        if ( ! is_singular( 'docs' ) ) {
+            return $content;
+        }
+
+        // Use the TOC generator's filter_content method
+        return CT_Docs_TOC_Generator::filter_content( $content );
     }
 
     /**

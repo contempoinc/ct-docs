@@ -103,8 +103,10 @@ class CT_Docs_Taxonomy {
                 'post_type'      => 'docs',
                 'post_status'    => 'publish',
                 'posts_per_page' => -1,
-                'orderby'        => 'title',
-                'order'          => 'ASC',
+                'orderby'        => array(
+                    'menu_order' => 'ASC',
+                    'title'      => 'ASC',
+                ),
                 'tax_query'      => array(
                     array(
                         'taxonomy' => 'doc_category',

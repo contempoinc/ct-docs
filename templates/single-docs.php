@@ -26,8 +26,8 @@ $toc_html = CT_Docs_TOC_Generator::get_toc( $current_post_id );
 $docs_page_url = get_permalink( CT_Docs_CPT::get_docs_page_id() );
 ?>
 
-<!-- Docs Header -->
-<header class="ct-docs-page-header ct-docs-page-header--sticky">
+<!-- Desktop Docs Header -->
+<header class="ct-docs-page-header ct-docs-page-header--sticky ct-docs-desktop-header">
     <div class="ct-docs-page-header-inner">
         <a href="<?php echo esc_url( $docs_page_url ); ?>" class="ct-docs-page-header-title">
             <span>Documentation</span>
@@ -38,20 +38,23 @@ $docs_page_url = get_permalink( CT_Docs_CPT::get_docs_page_id() );
     </div>
 </header>
 
-<div id="ct-docs-single" class="ct-docs-single-wrapper">
-    
-    <!-- Mobile Navigation Toggle -->
-    <button class="ct-docs-mobile-nav-toggle" aria-label="Open navigation" aria-expanded="false">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<!-- Mobile Header Bar -->
+<header class="ct-docs-mobile-header">
+    <button class="ct-docs-mobile-menu-btn" aria-label="Open navigation" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
+        <span>Menu</span>
     </button>
-
-    <!-- Mobile TOC Toggle -->
-    <button class="ct-docs-mobile-toc-toggle" aria-label="Table of contents">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    
+    <a href="<?php echo esc_url( $docs_page_url ); ?>" class="ct-docs-mobile-header-title">Docs</a>
+    
+    <?php if ( ! empty( $toc_html ) ) : ?>
+    <button class="ct-docs-mobile-toc-btn" aria-label="Table of contents" aria-expanded="false">
+        <span>Contents</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="8" y1="6" x2="21" y2="6"></line>
             <line x1="8" y1="12" x2="21" y2="12"></line>
             <line x1="8" y1="18" x2="21" y2="18"></line>
@@ -60,7 +63,11 @@ $docs_page_url = get_permalink( CT_Docs_CPT::get_docs_page_id() );
             <line x1="3" y1="18" x2="3.01" y2="18"></line>
         </svg>
     </button>
+    <?php endif; ?>
+</header>
 
+<div id="ct-docs-single" class="ct-docs-single-wrapper">
+    
     <!-- Backdrop for mobile overlays -->
     <div class="ct-docs-backdrop"></div>
 

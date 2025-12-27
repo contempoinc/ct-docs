@@ -21,7 +21,9 @@
     function initAccordion() {
         const accordion = document.querySelector('.ct-docs-accordion');
         const sidebar = document.querySelector('.ct-docs-sidebar');
-        const navToggle = document.querySelector('.ct-docs-mobile-nav-toggle');
+        const tocSidebar = document.querySelector('.ct-docs-toc-sidebar');
+        const menuBtn = document.querySelector('.ct-docs-mobile-menu-btn');
+        const tocBtn = document.querySelector('.ct-docs-mobile-toc-btn');
         const backdrop = document.querySelector('.ct-docs-backdrop');
         
         if (!accordion) return;
@@ -110,30 +112,67 @@
         }
 
         /**
-         * Open mobile navigation
+         * Open mobile navigation drawer
          */
         function openMobileNav() {
             sidebar?.classList.add('is-open');
             backdrop?.classList.add('is-visible');
-            navToggle?.setAttribute('aria-expanded', 'true');
+            menuBtn?.setAttribute('aria-expanded', 'true');
             document.body.style.overflow = 'hidden';
-            
-            // Focus first focusable element
-            const firstFocusable = sidebar?.querySelector('input, button, a');
-            firstFocusable?.focus();
         }
 
         /**
-         * Close mobile navigation
+         * Close mobile navigation drawer
          */
         function closeMobileNav() {
             sidebar?.classList.remove('is-open');
-            backdrop?.classList.remove('is-visible');
-            navToggle?.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
+            menuBtn?.setAttribute('aria-expanded', 'false');
             
-            // Return focus to toggle
-            navToggle?.focus();
+            // Only hide backdrop if TOC is also closed
+            if (!tocSidebar?.classList.contains('is-open')) {
+                backdrop?.classList.remove('is-visible');
+                document.body.style.overflow = '';
+            }
+            
+            menuBtn?.focus();
+        }
+
+        /**
+         * Open TOC drawer
+         */
+        function openTocDrawer() {
+            tocSidebar?.classList.add('is-open');
+            backdrop?.classList.add('is-visible');
+            tocBtn?.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        /**
+         * Close TOC drawer
+         */
+        function closeTocDrawer() {
+            tocSidebar?.classList.remove('is-open');
+            tocBtn?.setAttribute('aria-expanded', 'false');
+            
+            // Only hide backdrop if nav is also closed
+            if (!sidebar?.classList.contains('is-open')) {
+                backdrop?.classList.remove('is-visible');
+                document.body.style.overflow = '';
+            }
+            
+            tocBtn?.focus();
+        }
+
+        /**
+         * Close all drawers
+         */
+        function closeAllDrawers() {
+            sidebar?.classList.remove('is-open');
+            tocSidebar?.classList.remove('is-open');
+            backdrop?.classList.remove('is-visible');
+            menuBtn?.setAttribute('aria-expanded', 'false');
+            tocBtn?.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
         }
 
         /**
@@ -188,33 +227,41 @@
             });
         });
 
-        // Mobile navigation toggle
-        navToggle?.addEventListener('click', () => {
+        // Mobile menu button toggle
+        menuBtn?.addEventListener('click', () => {
             if (sidebar?.classList.contains('is-open')) {
                 closeMobileNav();
             } else {
+                // Close TOC first if open
+                if (tocSidebar?.classList.contains('is-open')) {
+                    closeTocDrawer();
+                }
                 openMobileNav();
             }
         });
 
-        // Close on backdrop click (also handled in toc.js, but safe to duplicate)
-        backdrop?.addEventListener('click', () => {
-            closeMobileNav();
-            // Also close TOC if open
-            const tocSidebar = document.querySelector('.ct-docs-toc-sidebar');
+        // Mobile TOC button toggle
+        tocBtn?.addEventListener('click', () => {
             if (tocSidebar?.classList.contains('is-open')) {
-                tocSidebar.classList.remove('is-open');
-                backdrop.classList.remove('is-visible');
-                document.body.style.overflow = '';
+                closeTocDrawer();
+            } else {
+                // Close nav first if open
+                if (sidebar?.classList.contains('is-open')) {
+                    closeMobileNav();
+                }
+                openTocDrawer();
             }
+        });
+
+        // Close on backdrop click
+        backdrop?.addEventListener('click', () => {
+            closeAllDrawers();
         });
 
         // Close on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (sidebar?.classList.contains('is-open')) {
-                    closeMobileNav();
-                }
+                closeAllDrawers();
             }
         });
 
@@ -223,6 +270,23 @@
             if (e.key !== 'Tab' || !sidebar.classList.contains('is-open')) return;
             
             const focusable = sidebar.querySelectorAll('input, button, a, [tabindex]:not([tabindex="-1"])');
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        });
+
+        // Focus trap for TOC drawer
+        tocSidebar?.addEventListener('keydown', (e) => {
+            if (e.key !== 'Tab' || !tocSidebar.classList.contains('is-open')) return;
+            
+            const focusable = tocSidebar.querySelectorAll('input, button, a, [tabindex]:not([tabindex="-1"])');
             const first = focusable[0];
             const last = focusable[focusable.length - 1];
             

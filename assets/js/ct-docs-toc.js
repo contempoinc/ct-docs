@@ -32,8 +32,6 @@
     function initTOC() {
         const toc = document.querySelector('.ct-docs-toc');
         const tocSidebar = document.querySelector('.ct-docs-toc-sidebar');
-        const tocToggle = document.querySelector('.ct-docs-mobile-toc-toggle');
-        const backdrop = document.querySelector('.ct-docs-backdrop');
         
         if (!toc) return;
 
@@ -162,8 +160,8 @@
             // Update progressive disclosure
             updateExpandedSections(activeItem);
             
-            // Update indicator position (with slight delay for expand animation)
-            setTimeout(() => updateIndicator(activeLink), 50);
+            // Update indicator position (delay for expand/collapse transition to complete)
+            setTimeout(() => updateIndicator(activeLink), 350);
         }, 100);
 
         /**
@@ -200,33 +198,6 @@
             target.focus({ preventScroll: true });
         }
 
-        /**
-         * Open mobile TOC (bottom sheet)
-         */
-        function openMobileTOC() {
-            tocSidebar?.classList.add('is-open');
-            backdrop?.classList.add('is-visible');
-            tocToggle?.setAttribute('aria-expanded', 'true');
-            document.body.style.overflow = 'hidden';
-            
-            // Focus first TOC link
-            const firstLink = toc.querySelector('a');
-            firstLink?.focus();
-        }
-
-        /**
-         * Close mobile TOC
-         */
-        function closeMobileTOC() {
-            tocSidebar?.classList.remove('is-open');
-            backdrop?.classList.remove('is-visible');
-            tocToggle?.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-            
-            // Return focus to toggle
-            tocToggle?.focus();
-        }
-
         // Event listeners
         links.forEach(link => {
             link.addEventListener('click', scrollToHeading);
@@ -239,46 +210,16 @@
                 link?.addEventListener('click', (e) => {
                     // Toggle expanded state on click (in addition to navigation)
                     item.classList.toggle('is-expanded');
-                    // Update indicator after expand animation
+                    // Update indicator after expand animation completes
                     setTimeout(() => {
                         const activeLink = toc.querySelector('.ct-docs-toc-item.is-active > a');
                         updateIndicator(activeLink);
-                    }, 50);
+                    }, 350);
                 });
             }
         });
 
         window.addEventListener('scroll', updateActiveItem);
-        
-        // Mobile TOC toggle
-        tocToggle?.addEventListener('click', () => {
-            if (tocSidebar?.classList.contains('is-open')) {
-                closeMobileTOC();
-            } else {
-                openMobileTOC();
-            }
-        });
-
-        // Close on backdrop click
-        backdrop?.addEventListener('click', () => {
-            closeMobileTOC();
-            // Also close sidebar if open
-            const sidebar = document.querySelector('.ct-docs-sidebar');
-            if (sidebar?.classList.contains('is-open')) {
-                sidebar.classList.remove('is-open');
-                backdrop.classList.remove('is-visible');
-                document.body.style.overflow = '';
-            }
-        });
-
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (tocSidebar?.classList.contains('is-open')) {
-                    closeMobileTOC();
-                }
-            }
-        });
 
         // Handle hash on page load
         if (window.location.hash) {

@@ -336,7 +336,7 @@
 }
 
 .ct-docs-body h2 {
-    margin-block-start: 3em !important;
+    margin-block-start: 1.5em !important;
     margin-block-end: 1.5em !important;
     font-size: 30px !important;
     font-weight: 700 !important;
@@ -344,7 +344,7 @@
 }
 
 .ct-docs-body h3 {
-    margin-block-start: 3em !important;
+    margin-block-start: 1.5em !important;
     margin-block-end: 1.5em !important;
     font-size: 23px !important;
     font-weight: 600 !important;
@@ -352,7 +352,7 @@
 }
 
 .ct-docs-body h4 {
-    margin-block-start: 3em !important;
+    margin-block-start: 1.5em !important;
     margin-block-end: 1.5em !important;
     font-size: 18px !important;
     font-weight: 600 !important;
@@ -360,7 +360,7 @@
 }
 
 .ct-docs-body h5 {
-    margin-block-start: 3em !important;
+    margin-block-start: 1.5em !important;
     margin-block-end: 1.5em !important;
     font-size: 16px !important;
     font-weight: 600 !important;
@@ -510,7 +510,7 @@
 
 .ct-docs-toc-item a {
     display: block;
-    padding: 6px 0 6px 6px;
+    padding: 6px 12px 6px 12px;
     color: var(--ct-docs-text-light);
     text-decoration: none;
     font-size: 13px;
@@ -572,22 +572,22 @@
     opacity: 1;
 }
 
-/* Visual indicator for expandable items */
+/* Visual indicator for expandable items - positioned absolute right */
 .ct-docs-toc-item.has-children > a::after {
     content: '';
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    margin-left: 8px;
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    width: 5px;
+    height: 5px;
     border-right: 1.5px solid var(--ct-docs-text-muted);
     border-bottom: 1.5px solid var(--ct-docs-text-muted);
-    transform: rotate(-45deg);
+    transform: translateY(-50%) rotate(-45deg);
     transition: transform 0.2s ease;
-    vertical-align: middle;
 }
 
 .ct-docs-toc-item.is-expanded > a::after {
-    transform: rotate(45deg);
+    transform: translateY(-50%) rotate(45deg);
 }
 
 /* ============================================
@@ -1027,40 +1027,81 @@
 }
 
 /* ============================================
-   Mobile Navigation Toggles
+   Mobile Header Bar
    ============================================ */
-.ct-docs-mobile-nav-toggle,
-.ct-docs-mobile-toc-toggle {
+.ct-docs-mobile-header {
     display: none;
-    position: fixed;
-    z-index: 1001;
-    width: 56px;
-    height: 56px;
-    border: none;
-    border-radius: 50%;
-    background: var(--ct-docs-primary);
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(3, 181, 195, 0.3);
-    transition: all var(--ct-docs-transition);
-    align-items: center;
-    justify-content: center;
 }
 
-.ct-docs-mobile-nav-toggle:hover,
-.ct-docs-mobile-toc-toggle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 16px rgba(3, 181, 195, 0.4);
-}
-
-.ct-docs-mobile-nav-toggle {
-    top: 100px;
-    left: 16px;
-}
-
-.ct-docs-mobile-toc-toggle {
-    bottom: 24px;
-    right: 24px;
+@media (max-width: 991px) {
+    /* Hide desktop header on mobile */
+    .ct-docs-desktop-header {
+        display: none !important;
+    }
+    
+    .ct-docs-mobile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        padding: 0 16px;
+        background: #fff;
+        border-bottom: 1px solid var(--ct-docs-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        z-index: 1001;
+    }
+    
+    .ct-docs-mobile-menu-btn,
+    .ct-docs-mobile-toc-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border: none !important;
+        border-radius: 8px;
+        background: transparent !important;
+        background-color: transparent !important;
+        color: #000 !important;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity var(--ct-docs-transition);
+    }
+    
+    .ct-docs-mobile-menu-btn:hover,
+    .ct-docs-mobile-toc-btn:hover {
+        background: transparent !important;
+        color: #000 !important;
+        opacity: 0.8;
+    }
+    
+    .ct-docs-mobile-menu-btn:active,
+    .ct-docs-mobile-toc-btn:active {
+        background: transparent !important;
+        color: #000 !important;
+        opacity: 0.6;
+    }
+    
+    .ct-docs-mobile-menu-btn svg,
+    .ct-docs-mobile-toc-btn svg {
+        flex-shrink: 0;
+    }
+    
+    .ct-docs-mobile-header-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--ct-docs-text);
+        text-decoration: none;
+    }
+    
+    /* Account for fixed header */
+    .ct-docs-single-wrapper {
+        padding-top: 56px;
+    }
 }
 
 .ct-docs-backdrop {
@@ -1082,7 +1123,7 @@
 }
 
 /* ============================================
-   Tablet Styles (768px - 1199px)
+   Tablet Styles (992px - 1199px)
    ============================================ */
 @media (max-width: 1199px) {
     .ct-docs-single-wrapper {
@@ -1094,32 +1135,99 @@
         display: none;
     }
 
-    .ct-docs-mobile-nav-toggle {
-        display: flex;
+    .ct-docs-related-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
+}
 
-    .ct-docs-sidebar.is-open {
-        display: block;
+/* ============================================
+   Mobile Drawer Styles (< 992px)
+   ============================================ */
+@media (max-width: 991px) {
+    /* Left sidebar - slide from left */
+    .ct-docs-sidebar {
         position: fixed;
         top: 0;
         left: 0;
+        bottom: 0;
         width: 320px;
-        height: 100vh;
+        max-width: 85vw;
+        height: 100%;
+        height: 100dvh; /* Dynamic viewport height for mobile */
+        max-height: none;
         z-index: 1000;
         background: var(--ct-docs-bg);
         padding: 20px;
+        padding-top: 70px; /* Account for mobile header */
         overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: block;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .ct-docs-sidebar.is-open {
         transform: translateX(0);
-        animation: ct-docs-slide-in-left 0.3s ease;
     }
 
-    @keyframes ct-docs-slide-in-left {
-        from { transform: translateX(-100%); }
-        to { transform: translateX(0); }
+    /* Right TOC sidebar - slide from right */
+    .ct-docs-toc-sidebar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 320px;
+        max-width: 85vw;
+        height: 100%;
+        height: 100dvh;
+        max-height: none;
+        z-index: 1000;
+        background: var(--ct-docs-bg);
+        padding: 20px;
+        padding-top: 70px;
+        overflow-y: auto;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: block;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
     }
 
-    .ct-docs-related-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .ct-docs-toc-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    /* Close button for drawers */
+    .ct-docs-drawer-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 50%;
+        background: var(--ct-docs-bg-light);
+        color: var(--ct-docs-text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--ct-docs-transition);
+    }
+
+    .ct-docs-drawer-close:hover {
+        background: var(--ct-docs-border);
+    }
+
+    /* Drawer titles */
+    .ct-docs-drawer-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ct-docs-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--ct-docs-border);
     }
 }
 
@@ -1127,55 +1235,10 @@
    Mobile Styles (< 768px)
    ============================================ */
 @media (max-width: 767px) {
-    .ct-docs-page-header-inner {
-        flex-direction: column;
-        gap: 12px;
-        padding: 12px 16px;
-        align-items: stretch;
-    }
-
-    .ct-docs-page-header-title {
-        font-size: 16px;
-        justify-content: center;
-    }
-
-    .ct-docs-page-header-search {
-        max-width: 100%;
-    }
-
     .ct-docs-single-wrapper {
         grid-template-columns: 1fr;
         padding: 20px 16px;
         gap: 0;
-    }
-
-    .ct-docs-toc-sidebar {
-        display: none;
-    }
-
-    .ct-docs-mobile-toc-toggle {
-        display: flex;
-    }
-
-    .ct-docs-toc-sidebar.is-open {
-        display: block;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        max-height: 70vh;
-        z-index: 1000;
-        background: var(--ct-docs-bg);
-        border-radius: 16px 16px 0 0;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-        padding: 20px;
-        overflow-y: auto;
-        animation: ct-docs-slide-up 0.3s ease;
-    }
-
-    @keyframes ct-docs-slide-up {
-        from { transform: translateY(100%); }
-        to { transform: translateY(0); }
     }
 
     .ct-docs-sidebar-search {
@@ -1216,6 +1279,12 @@
     .ct-docs-search-widget {
         max-width: 100%;
     }
+
+    /* Narrower drawers on small screens */
+    .ct-docs-sidebar,
+    .ct-docs-toc-sidebar {
+        width: 280px;
+    }
 }
 
 /* Tablet: 2 columns max */
@@ -1232,10 +1301,29 @@
 .ct-docs-accordion-header:focus-visible,
 .ct-docs-nav-item a:focus-visible,
 .ct-docs-toc-item a:focus-visible,
-.ct-docs-mobile-nav-toggle:focus-visible,
-.ct-docs-mobile-toc-toggle:focus-visible {
+.ct-docs-mobile-menu-btn:focus-visible,
+.ct-docs-mobile-toc-btn:focus-visible {
     outline: 2px solid var(--ct-docs-primary);
     outline-offset: 2px;
+}
+
+/* Remove focus styles on mobile/touch devices */
+@media (max-width: 991px) {
+    .ct-docs-search-input:focus,
+    .ct-docs-search-input:focus-visible,
+    .ct-docs-accordion-header:focus,
+    .ct-docs-accordion-header:focus-visible,
+    .ct-docs-nav-item a:focus,
+    .ct-docs-nav-item a:focus-visible,
+    .ct-docs-toc-item a:focus,
+    .ct-docs-toc-item a:focus-visible,
+    .ct-docs-mobile-menu-btn:focus,
+    .ct-docs-mobile-menu-btn:focus-visible,
+    .ct-docs-mobile-toc-btn:focus,
+    .ct-docs-mobile-toc-btn:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+    }
 }
 
 /* Skip link for keyboard users */

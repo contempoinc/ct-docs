@@ -510,7 +510,7 @@
 
 .ct-docs-toc-item a {
     display: block;
-    padding: 6px 12px 6px 12px;
+    padding: 6px 16px 6px 12px;
     color: var(--ct-docs-text-light);
     text-decoration: none;
     font-size: 13px;
@@ -1053,6 +1053,17 @@
         border-bottom: 1px solid var(--ct-docs-border);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         z-index: 1001;
+        transition: top 0.34s ease;
+    }
+    
+    /* Accommodate main site sticky header when scrolling up */
+    .ct-docs-mobile-header.is-scrolled-up {
+        top: 91px;
+    }
+    
+    /* Hide when scrolling down (optional - remove if you want it always visible) */
+    .ct-docs-mobile-header.is-scrolled-down {
+        top: 0;
     }
     
     .ct-docs-mobile-menu-btn,

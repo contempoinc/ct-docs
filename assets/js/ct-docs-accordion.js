@@ -16,6 +16,45 @@
     const STORAGE_KEY = 'ct_docs_accordion_state';
 
     /**
+     * Initialize mobile header scroll behavior
+     */
+    function initMobileHeaderScroll() {
+        const mobileHeader = document.querySelector('.ct-docs-mobile-header');
+        if (!mobileHeader) return;
+
+        let lastScrollY = window.scrollY;
+        let ticking = false;
+
+        function updateHeaderPosition() {
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY <= 0) {
+                // At top of page - normal position
+                mobileHeader.classList.remove('is-scrolled-up');
+                mobileHeader.classList.remove('is-scrolled-down');
+            } else if (currentScrollY < lastScrollY) {
+                // Scrolling up - move down to accommodate main header
+                mobileHeader.classList.add('is-scrolled-up');
+                mobileHeader.classList.remove('is-scrolled-down');
+            } else if (currentScrollY > lastScrollY) {
+                // Scrolling down - stay at top
+                mobileHeader.classList.remove('is-scrolled-up');
+                mobileHeader.classList.add('is-scrolled-down');
+            }
+            
+            lastScrollY = currentScrollY;
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(updateHeaderPosition);
+                ticking = true;
+            }
+        }, { passive: true });
+    }
+
+    /**
      * Initialize accordion functionality
      */
     function initAccordion() {
@@ -305,9 +344,13 @@
 
     // Initialize on DOM ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAccordion);
+        document.addEventListener('DOMContentLoaded', () => {
+            initAccordion();
+            initMobileHeaderScroll();
+        });
     } else {
         initAccordion();
+        initMobileHeaderScroll();
     }
 
 })();

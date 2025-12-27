@@ -1176,11 +1176,12 @@
         transform: translateX(-100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: block;
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+        box-shadow: none;
     }
 
     .ct-docs-sidebar.is-open {
         transform: translateX(0);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
     }
 
     /* Right TOC sidebar - slide from right */
@@ -1202,11 +1203,12 @@
         transform: translateX(100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: block;
-        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+        box-shadow: none;
     }
 
     .ct-docs-toc-sidebar.is-open {
         transform: translateX(0);
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
     }
 
     /* Close button for drawers */

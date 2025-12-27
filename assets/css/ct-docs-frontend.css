@@ -1043,16 +1043,22 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
+        position: relative;
         height: 56px;
         padding: 0 16px;
         background: #fff;
         border-bottom: 1px solid var(--ct-docs-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         z-index: 1001;
+    }
+    
+    /* When scrolling - becomes fixed */
+    .ct-docs-mobile-header.is-scrolled-up,
+    .ct-docs-mobile-header.is-scrolled-down {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         transition: top 0.34s ease;
     }
     
@@ -1061,9 +1067,9 @@
         top: 91px;
     }
     
-    /* Hide when scrolling down (optional - remove if you want it always visible) */
-    .ct-docs-mobile-header.is-scrolled-down {
-        top: 0;
+    /* Account for fixed header space when scrolling */
+    .ct-docs-single-wrapper.has-fixed-header {
+        padding-top: 56px;
     }
     
     .ct-docs-mobile-menu-btn,
@@ -1109,10 +1115,6 @@
         text-decoration: none;
     }
     
-    /* Account for fixed header */
-    .ct-docs-single-wrapper {
-        padding-top: 56px;
-    }
 }
 
 .ct-docs-backdrop {

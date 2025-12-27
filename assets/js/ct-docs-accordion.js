@@ -20,6 +20,7 @@
      */
     function initMobileHeaderScroll() {
         const mobileHeader = document.querySelector('.ct-docs-mobile-header');
+        const wrapper = document.querySelector('.ct-docs-single-wrapper');
         if (!mobileHeader) return;
 
         let lastScrollY = window.scrollY;
@@ -29,17 +30,20 @@
             const currentScrollY = window.scrollY;
             
             if (currentScrollY <= 0) {
-                // At top of page - normal position
+                // At top of page - relative position
                 mobileHeader.classList.remove('is-scrolled-up');
                 mobileHeader.classList.remove('is-scrolled-down');
+                wrapper?.classList.remove('has-fixed-header');
             } else if (currentScrollY < lastScrollY) {
-                // Scrolling up - move down to accommodate main header
+                // Scrolling up - fixed, move down to accommodate main header
                 mobileHeader.classList.add('is-scrolled-up');
                 mobileHeader.classList.remove('is-scrolled-down');
+                wrapper?.classList.add('has-fixed-header');
             } else if (currentScrollY > lastScrollY) {
-                // Scrolling down - stay at top
+                // Scrolling down - fixed at top
                 mobileHeader.classList.remove('is-scrolled-up');
                 mobileHeader.classList.add('is-scrolled-down');
+                wrapper?.classList.add('has-fixed-header');
             }
             
             lastScrollY = currentScrollY;

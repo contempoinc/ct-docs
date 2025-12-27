@@ -1060,12 +1060,17 @@
         right: 0;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         transition: top 0.34s ease;
+    }
+    
+    /* Scrolling down - higher z-index */
+    .ct-docs-mobile-header.is-scrolled-down {
         z-index: 1001;
     }
     
-    /* Accommodate main site sticky header when scrolling up */
+    /* Scrolling up - lower z-index, below main site header */
     .ct-docs-mobile-header.is-scrolled-up {
         top: 91px;
+        z-index: 98;
     }
     
     /* Account for fixed header space when scrolling */

@@ -1048,7 +1048,7 @@
         padding: 0 16px;
         background: #fff;
         border-bottom: 1px solid var(--ct-docs-border);
-        z-index: 1001;
+        z-index: 98;
     }
     
     /* When scrolling - becomes fixed */
@@ -1060,6 +1060,7 @@
         right: 0;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         transition: top 0.34s ease;
+        z-index: 1001;
     }
     
     /* Accommodate main site sticky header when scrolling up */
@@ -1088,6 +1089,12 @@
         cursor: pointer;
         transition: opacity var(--ct-docs-transition);
     }
+        .ct-docs-mobile-menu-btn {
+            padding-left: 0 !important;
+        } 
+        .ct-docs-mobile-toc-btn {
+            padding-right: 0 !important;
+        }
     
     .ct-docs-mobile-menu-btn:hover,
     .ct-docs-mobile-toc-btn:hover {

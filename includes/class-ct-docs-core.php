@@ -128,17 +128,41 @@ class CT_Docs_Core {
     /**
      * TOC Shortcode
      *
+     * Supports two display styles:
+     * - classic (default): Traditional list view
+     * - modern: Stripe-style sectioned grid with excerpts
+     *
      * @param array $atts Shortcode attributes
      * @return string HTML output
      */
     public function shortcode_toc( $atts ) {
         $atts = shortcode_atts( array(
-            'title'    => 'Documentation',
-            'category' => 'all',
-            'columns'  => 1,
-            'count'    => 'no',
+            'title'        => 'Documentation',
+            'subtitle'     => '',
+            'category'     => 'all',
+            'columns'      => 1,
+            'grid_columns' => 3,
+            'count'        => 'no',
+            'style'        => 'classic',
+            'excerpts'     => 'yes',
         ), $atts, 'ct_docs_toc' );
         
+        $style = sanitize_key( $atts['style'] );
+        
+        if ( 'modern' === $style ) {
+            return $this->shortcode_toc_modern( $atts );
+        }
+        
+        return $this->shortcode_toc_classic( $atts );
+    }
+
+    /**
+     * Render classic list style for TOC shortcode
+     *
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    private function shortcode_toc_classic( $atts ) {
         ob_start();
         
         // Query docs
@@ -190,6 +214,99 @@ class CT_Docs_Core {
         <?php
         endif;
         
+        return ob_get_clean();
+    }
+
+    /**
+     * Render modern Stripe-style grid for TOC shortcode
+     *
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    private function shortcode_toc_modern( $atts ) {
+        $category_filter = sanitize_key( $atts['category'] );
+        $grid_columns = intval( $atts['grid_columns'] );
+        $grid_columns = max( 2, min( 3, $grid_columns ) );
+        $show_count = $atts['count'] === 'yes';
+        $show_excerpts = $atts['excerpts'] === 'yes';
+        
+        // Get docs by category
+        $docs_by_category = CT_Docs_Taxonomy::get_docs_by_category();
+        
+        if ( empty( $docs_by_category ) ) {
+            return '<p>No documentation found.</p>';
+        }
+
+        // Filter to specific category if not 'all'
+        if ( 'all' !== $category_filter && isset( $docs_by_category[ $category_filter ] ) ) {
+            $docs_by_category = array( $category_filter => $docs_by_category[ $category_filter ] );
+        } elseif ( 'all' !== $category_filter ) {
+            return '<p>No documentation found in this category.</p>';
+        }
+        
+        // Determine if showing single category (use title option) or all categories (use term names)
+        $is_single_category = ( 'all' !== $category_filter );
+        
+        ob_start();
+        ?>
+        <div class="ct-docs-modern-index">
+            
+            <?php if ( ! $is_single_category && ! empty( $atts['title'] ) ) : ?>
+                <div class="ct-docs-index-header">
+                    <h2 class="ct-docs-index-title"><?php echo esc_html( $atts['title'] ); ?></h2>
+                    <?php if ( ! empty( $atts['subtitle'] ) ) : ?>
+                        <p class="ct-docs-index-subtitle"><?php echo esc_html( $atts['subtitle'] ); ?></p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php foreach ( $docs_by_category as $slug => $data ) :
+                $term = $data['term'];
+                $docs = $data['docs'];
+                $total_count = count( $docs );
+                
+                // Use title option for single category, otherwise use term name
+                $section_title = $is_single_category && ! empty( $atts['title'] ) 
+                    ? $atts['title'] 
+                    : $term->name;
+                ?>
+                
+                <section class="ct-docs-section">
+                    <div class="ct-docs-section-header-wrapper">
+                        <h3 class="ct-docs-section-header">
+                            <?php echo esc_html( $section_title ); ?>
+                            <?php if ( $show_count ) : ?>
+                                <span class="ct-docs-section-count">(<?php echo esc_html( $total_count ); ?>)</span>
+                            <?php endif; ?>
+                        </h3>
+                    </div>
+                    <div class="ct-docs-section-divider"></div>
+                    
+                    <div class="ct-docs-section-grid ct-docs-grid-cols-<?php echo esc_attr( $grid_columns ); ?>">
+                        <?php foreach ( $docs as $doc ) : 
+                            // Generate excerpt from content (first ~10 words)
+                            $excerpt = '';
+                            if ( $show_excerpts ) {
+                                $excerpt = ! empty( $doc->post_excerpt ) 
+                                    ? $doc->post_excerpt 
+                                    : wp_trim_words( wp_strip_all_tags( $doc->post_content ), 10, '...' );
+                            }
+                            ?>
+                            <a href="<?php echo esc_url( get_permalink( $doc->ID ) ); ?>" class="ct-docs-grid-item">
+                                <span class="ct-docs-grid-item-title"><?php echo esc_html( get_the_title( $doc->ID ) ); ?></span>
+                                <?php if ( $show_excerpts && ! empty( $excerpt ) ) : ?>
+                                    <span class="ct-docs-grid-item-excerpt"><?php echo esc_html( $excerpt ); ?></span>
+                                <?php endif; ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+                
+            <?php endforeach; ?>
+            
+        </div>
+        
+        <?php
         return ob_get_clean();
     }
 

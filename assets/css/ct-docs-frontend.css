@@ -1322,6 +1322,150 @@
 }
 
 /* ============================================
+   Modern Index - Stripe Style (Sectioned Grid)
+   ============================================ */
+
+.ct-docs-modern-index {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ct-docs-index-header {
+    text-align: center;
+    margin-bottom: 56px;
+}
+
+.ct-docs-index-title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 12px;
+    color: var(--ct-docs-text);
+    letter-spacing: -0.02em;
+}
+
+.ct-docs-index-subtitle {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ct-docs-text-light);
+    margin: 0;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+/* Section */
+.ct-docs-section {
+    margin-bottom: 56px;
+}
+
+.ct-docs-section:last-child {
+    margin-bottom: 0;
+}
+
+.ct-docs-section-header-wrapper {
+    margin-bottom: 8px;
+}
+
+.ct-docs-section-header {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ct-docs-text-light);
+    text-transform: none;
+    letter-spacing: 0.5px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ct-docs-section-count {
+    font-weight: 400;
+    color: var(--ct-docs-text-muted);
+}
+
+.ct-docs-section-divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--ct-docs-primary), transparent);
+    margin-bottom: 28px;
+}
+
+/* Section Grid */
+.ct-docs-section-grid {
+    display: grid;
+    gap: 32px 48px;
+}
+
+.ct-docs-section-grid.ct-docs-grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.ct-docs-section-grid.ct-docs-grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Grid Item */
+.ct-docs-grid-item {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.ct-docs-grid-item:hover .ct-docs-grid-item-title {
+    color: var(--ct-docs-primary-dark);
+}
+
+.ct-docs-grid-item-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ct-docs-primary);
+    line-height: 1.4;
+    margin-bottom: 4px;
+    transition: color 0.2s ease;
+}
+
+.ct-docs-grid-item-excerpt {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ct-docs-text-light);
+}
+
+/* Modern Index Responsive */
+@media (max-width: 1024px) {
+    .ct-docs-section-grid.ct-docs-grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .ct-docs-index-title {
+        font-size: 28px;
+    }
+    
+    .ct-docs-index-subtitle {
+        font-size: 16px;
+    }
+    
+    .ct-docs-section {
+        margin-bottom: 40px;
+    }
+    
+    .ct-docs-section-grid.ct-docs-grid-cols-2,
+    .ct-docs-section-grid.ct-docs-grid-cols-3 {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .ct-docs-grid-item-title {
+        font-size: 15px;
+    }
+    
+    .ct-docs-grid-item-excerpt {
+        font-size: 13px;
+    }
+}
+
+/* ============================================
    Accessibility
    ============================================ */
 .ct-docs-search-input:focus-visible,
